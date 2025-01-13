@@ -1,5 +1,6 @@
 import { Roboto, Cairo } from "next/font/google";
 import "./globals.css";
+import ProviderWrap from "./_rtk/ProviderWrap";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -21,7 +22,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${cairo.className} dark:bg-gray-900 antialiased`}>
-        {children}
+        <ProviderWrap>{children}</ProviderWrap>
       </body>
     </html>
   );
