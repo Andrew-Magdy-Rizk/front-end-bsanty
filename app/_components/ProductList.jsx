@@ -1,8 +1,7 @@
 import Image from "next/image";
-import React from "react";
 import { getProducts } from "@/app/_axios/api/products";
-import Pagination from "./pagination";
 import Link from "next/link";
+import Pagination from "./Pagination";
 
 async function ProductList() {
   const limit = 3;
