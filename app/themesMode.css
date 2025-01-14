@@ -61,7 +61,7 @@
   top: 50%;
   transform: translateY(-50%);
   width: 12px;
-  z-index: 100;
+  z-index: 1;
   -webkit-transform: translateY(-50%);
   -moz-transform: translateY(-50%);
   -ms-transform: translateY(-50%);

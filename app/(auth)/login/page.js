@@ -5,15 +5,26 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { loginReducer } from "@/app/_rtk/slices/authReducers";
 import { useRouter } from "next/navigation";
+import ErrorMessage from "@/app/_components/ErrorMessage";
 function signIn() {
   const [data, setData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState([]);
 
   const dispatch = useDispatch();
   const route = useRouter();
   const handelChange = (e) => {
     const { name, value } = e.target;
     setData({ ...data, [name]: value });
+  };
+  const handelError = () => {
+    clearTimeout();
+    setTimeout(() => {
+      setErr([]);
+    }, 3000);
+    return (
+      err.length > 0 && err.map((err) => <ErrorMessage error={err} key={err} />)
+    );
   };
 
   const handelSubmit = async (e) => {
@@ -28,13 +39,20 @@ function signIn() {
         route.replace("/");
       }
     } catch (error) {
-      console.log(error);
+      setErr([...err, error.response.data]);
     }
     setLoading(false);
   };
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+        {err.length > 0 && (
+          <ul className="fixed top-5 w-[90%]">
+            <div className="flex flex-col gap-4 items-center justify-center">
+              {handelError()}
+            </div>
+          </ul>
+        )}
         <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">

@@ -1,5 +1,6 @@
 "use client";
 import { signup } from "@/app/_axios/api/auth";
+import ErrorMessage from "@/app/_components/ErrorMessage";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
@@ -7,8 +8,6 @@ import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
 
 function signUp() {
-  const auth = useSelector((state) => state.auth);
-  console.log("auth", auth);
   const [data, setData] = useState({
     name: "",
     email: "",
@@ -16,19 +15,33 @@ function signUp() {
     confirmPassword: "",
   });
   const [remember, setRemember] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState([]);
   const router = useRouter();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setData({ ...data, [name]: value });
     setRemember(!remember);
-    console.log(data);
+  };
+
+  const handelError = () => {
+    clearTimeout();
+    setTimeout(() => {
+      setErr([]);
+    }, 3000);
+    return (
+      err.length > 0 &&
+      err.map((error) => <ErrorMessage error={error} key={err} />)
+    );
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     if (data.password !== data.confirmPassword) {
+      setErr(...err, { state: "field", message: "Passwords do not match" });
       return Swal.fire({
         icon: "error",
         title: "password does not match!",
@@ -36,35 +49,14 @@ function signUp() {
       });
     }
     try {
-      signup(data).then((res) => {
-        Swal.fire({
-          position: "top-end",
-          icon: "success",
-          title: "Account created successfully",
-          showConfirmButton: true,
-          timer: 1500,
-        });
-        console.log(res);
-        const token = res.data.date.token;
-        if (token && remember) {
-          localStorage.setItem("token", token);
-        }
-        const role = res.data.date.role;
-        if (role === "admin") {
-          router.push("/admin");
-        } else {
-          router.push("/");
-        }
-      });
-    } catch (err) {
-      const errors = err.response.data.errors;
-      console.log(err);
-      Swal.fire({
-        icon: "error",
-        title: errors[0].msg,
-        text: "Something went wrong!",
-      });
-
+      const res = await signup(data);
+      console.log(res);
+      setLoading(false);
+      router.push("/login");
+    } catch (error) {
+      setErr([...err, ...error.response.data.errors]);
+      console.log(error);
+      setLoading(false);
       //   if (errors) {
       //     errors.forEach(async (error) => {
       //       await Swal.fire({
@@ -75,12 +67,18 @@ function signUp() {
       //     });
       //   }
     }
-    setData({ name: "", email: "", password: "", confirmPassword: "" });
   };
 
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+        {err.length > 0 && (
+          <ul className="fixed top-5 w-[90%]">
+            <div className="flex flex-col gap-4 items-center justify-center">
+              {handelError()}
+            </div>
+          </ul>
+        )}
         <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
@@ -185,7 +183,7 @@ function signUp() {
                 type="submit"
                 className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
               >
-                Sign up
+                {loading ? "loading..." : "Sign up"}
               </button>
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                 Don’t have an account yet?{" "}
