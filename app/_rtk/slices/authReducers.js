@@ -21,8 +21,7 @@ const authSlice = createSlice({
   name: "auth",
   reducers: {
     loginReducer: (state, action) => {
-      console.log(action.payload);
-      state.user = action.payload.date;
+      state.user = action.payload.data;
       state.token = action.payload.token;
     },
     logoutReducer: (state) => {
@@ -32,8 +31,8 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(actRegister.fulfilled, (state, action) => {
-      state.user = action.payload.data.user;
-      state.token = action.payload.data.token;
+      state.user = action.payload.data;
+      state.token = action.payload.token;
     });
     builder.addCase(actRegister.rejected, (state, action) => {
       state.error = action.payload;

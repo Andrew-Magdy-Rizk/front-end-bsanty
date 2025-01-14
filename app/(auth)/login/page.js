@@ -22,12 +22,11 @@ function signIn() {
       setLoading(true);
       const res = await login(data);
       dispatch(loginReducer(res.data));
-      console.log(res);
-      // if (res.data.date.role === "admin") {
-      //   route.push("/admin");
-      // } else {
-      //   route.push("/");
-      // }
+      if (res.data.data.role === "admin") {
+        route.replace("/admin");
+      } else {
+        route.replace("/");
+      }
     } catch (error) {
       console.log(error);
     }
@@ -119,7 +118,7 @@ function signIn() {
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                 Don’t have an account yet?{" "}
                 <Link
-                  href="/sign-up"
+                  href="/signup"
                   className="font-medium text-primary-600 hover:underline dark:text-primary-500"
                 >
                   Sign up

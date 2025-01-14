@@ -1,12 +1,14 @@
 "use client";
 import { signup } from "@/app/_axios/api/auth";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
 
 function signUp() {
+  const auth = useSelector((state) => state.auth);
+  console.log("auth", auth);
   const [data, setData] = useState({
     name: "",
     email: "",
@@ -51,7 +53,7 @@ function signUp() {
         if (role === "admin") {
           router.push("/admin");
         } else {
-          router.push("/sign-in");
+          router.push("/");
         }
       });
     } catch (err) {
@@ -91,7 +93,7 @@ function signUp() {
             >
               <div>
                 <label
-                  for="full-name"
+                  htmlFor="full-name"
                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >
                   FullName
@@ -108,7 +110,7 @@ function signUp() {
               </div>
               <div>
                 <label
-                  for="email"
+                  htmlFor="email"
                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >
                   Your email
@@ -125,7 +127,7 @@ function signUp() {
               </div>
               <div>
                 <label
-                  for="password"
+                  htmlFor="password"
                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >
                   Password
@@ -142,7 +144,7 @@ function signUp() {
               </div>
               <div>
                 <label
-                  for="confirm-password"
+                  htmlFor="confirm-password"
                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >
                   Confirm Password
@@ -171,7 +173,7 @@ function signUp() {
                   </div>
                   <div className="ml-3 text-sm">
                     <label
-                      for="remember"
+                      htmlFor="remember"
                       className="text-gray-500 dark:text-gray-300"
                     >
                       Remember me
@@ -188,7 +190,7 @@ function signUp() {
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                 Don’t have an account yet?{" "}
                 <Link
-                  href="/sign-in"
+                  href="/login"
                   className="font-medium text-primary-600 hover:underline dark:text-primary-500"
                 >
                   Sign in

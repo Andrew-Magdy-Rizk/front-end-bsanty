@@ -5,14 +5,18 @@ import Link from "next/link";
 import { FiMenu } from "react-icons/fi";
 import { TfiClose } from "react-icons/tfi";
 import { useState } from "react";
+import { FaUserCircle } from "react-icons/fa";
+import { useSelector } from "react-redux";
+
 export default function Header() {
+  const auth = useSelector((state) => state.auth);
   const [openMenu, setOpenMenu] = useState(false);
   const links = [
     { id: crypto.randomUUID(), title: "Home", route: "/" },
     { id: crypto.randomUUID(), title: "About", route: "/about" },
     { id: crypto.randomUUID(), title: "Services", route: "/services" },
-    { id: crypto.randomUUID(), title: "Login", route: "/login" },
-    { id: crypto.randomUUID(), title: "SignUp", route: "/signup" },
+    // { id: crypto.randomUUID(), title: "Login", route: "/login" },
+    // { id: crypto.randomUUID(), title: "SignUp", route: "/signup" },
   ];
   return (
     <header className="shadow dark:shadow-gray-600 bg-white dark:bg-gray-900">
@@ -56,38 +60,41 @@ export default function Header() {
                 placeholder="Search..."
               />
             </li>
-            {links.map((link) =>
-              link.title === "Login" ? (
-                <>
-                  <li
-                    key={`mode-${link.id}`}
-                    className="flex justify-center items-center border-b-2 pb-6 w-[20%] lg:w-auto lg:border-b-0 lg:border-r-2 lg:py-2 lg:pr-6"
-                  >
-                    <ThemesMode />
-                  </li>
-                  <li
-                    key={link.id}
-                    onClick={() => setOpenMenu(!openMenu)}
-                    className={`text-gray-800 font-medium dark:text-gray-200 px-6 py-2 transition-colors duration-300 hover:text-primary-500 ${
-                      link.title === "Login" &&
-                      "bg-primary-500 hover:bg-primary-600 hover:text-white rounded-full"
-                    }`}
-                  >
-                    <Link href={link.route}>{link.title}</Link>
-                  </li>
-                </>
-              ) : (
+
+            {links.map((link) => (
+              <li
+                key={link.id}
+                onClick={() => setOpenMenu(!openMenu)}
+                className={`text-gray-800 font-medium dark:text-gray-200 px-6 py-2 transition-colors duration-300 hover:text-primary-500`}
+              >
+                <Link href={link.route}>{link.title}</Link>
+              </li>
+            ))}
+            <li className="flex justify-center items-center border-b-2 pb-6 w-[20%] lg:w-auto lg:border-b-0 lg:border-r-2 lg:py-2 lg:pr-6">
+              <ThemesMode />
+            </li>
+            {auth.user !== null ? (
+              <li className="order-first lg:order-none flex flex-col justify-center items-center mx-6 text-primary-600 dark:text-primary-400">
+                <FaUserCircle size={30} />
+                <span className="font-semibold">
+                  {auth?.user?.name || "user"}
+                </span>
+              </li>
+            ) : (
+              <>
                 <li
-                  key={link.id}
                   onClick={() => setOpenMenu(!openMenu)}
-                  className={`text-gray-800 font-medium dark:text-gray-200 px-6 py-2 transition-colors duration-300 hover:text-primary-500 ${
-                    link.title === "Login" &&
-                    "bg-primary-500 hover:bg-primary-600 hover:text-white rounded-full"
-                  }`}
+                  className={`text-gray-800 font-medium dark:text-gray-200 px-6 py-2 transition-colors duration-300 bg-primary-500 hover:bg-primary-600 hover:text-white rounded-full`}
                 >
-                  <Link href={link.route}>{link.title}</Link>
+                  <Link href={"/login"}>Login</Link>
                 </li>
-              )
+                <li
+                  onClick={() => setOpenMenu(!openMenu)}
+                  className={`text-gray-800 font-medium dark:text-gray-200 px-6 py-2 transition-colors duration-300 bg-primary-500 hover:bg-primary-600 hover:text-white rounded-full`}
+                >
+                  <Link href={"/signup"}>Signup</Link>
+                </li>
+              </>
             )}
           </ul>
         </nav>
