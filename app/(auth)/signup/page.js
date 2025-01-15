@@ -42,6 +42,7 @@ function signUp() {
 
     if (data.password !== data.confirmPassword) {
       setErr(...err, { state: "field", message: "Passwords do not match" });
+      setLoading(false);
       return Swal.fire({
         icon: "error",
         title: "password does not match!",
