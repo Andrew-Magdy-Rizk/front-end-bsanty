@@ -1,7 +1,11 @@
 import axiosInstance from "../axios-instance";
 
 export const getCategories = (limit, page) =>
-  axiosInstance.get(`/categories${limit && `?limit=${limit}`}`);
+  axiosInstance.get(
+    `/categories${limit !== null && `?limit=${limit}`}${
+      page && `&page=${page}`
+    }`
+  );
 
 export const getCategory = (id) => axiosInstance.get(`/categories/${id}`);
 

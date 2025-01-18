@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 function Header() {
   const auth = useSelector((state) => state.auth);
   return (
-    <header className="flex justify-between items-center p-4 shadow-sm border-b border-gray-200">
+    <header className="flex justify-between items-center p-4 shadow-sm border-b border-gray-200 dark:border-gray-500 dark:bg-gray-800">
       <MdOutlineMenu
         className="md:hidden cursor-pointer"
         size={30}

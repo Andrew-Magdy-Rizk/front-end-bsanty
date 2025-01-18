@@ -3,14 +3,15 @@ import ThemesMode from "@/app/_components/ThemesMode";
 import { logoutReducer } from "@/app/_rtk/slices/authReducers";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
+import { FaShopify } from "react-icons/fa";
+import { MdCategory } from "react-icons/md";
 
 function SlideMenu() {
   const auth = useSelector((state) => state.auth);
   const dispatch = useDispatch();
-  console.log(auth);
   return (
-    <aside className="hidden md:flex col-span-3 dark:bg-gray-900">
-      <div className="flex h-screen w-16 flex-col justify-between border-e">
+    <aside className="hidden md:flex col-span-3 dark:bg-gray-800">
+      <div className="hidden lg:flex w-16 flex-col justify-between border-e dark:border-gray-500">
         <div>
           <div className="inline-flex size-16 items-center justify-center">
             <span className="grid size-10 place-content-center rounded-lg text-xs text-gray-600">
@@ -103,6 +104,30 @@ function SlideMenu() {
                     </span>
                   </a>
                 </li>
+                <li>
+                  <Link
+                    href="/admin/products"
+                    className="group relative flex justify-center rounded px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700 dark:text-white dark:hover:bg-gray-700"
+                  >
+                    <FaShopify />
+
+                    <span className="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">
+                      products
+                    </span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/admin/categories"
+                    className="group relative flex justify-center rounded px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700 dark:text-white dark:hover:bg-gray-700"
+                  >
+                    <MdCategory />
+
+                    <span className="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">
+                      categories
+                    </span>
+                  </Link>
+                </li>
 
                 <li>
                   <a
@@ -164,7 +189,7 @@ function SlideMenu() {
         </div>
       </div>
 
-      <div className="flex h-screen flex-1 flex-col justify-between border-e">
+      <div className="flex flex-1 flex-col justify-between border-e dark:border-gray-500">
         <div className="px-4 py-6">
           <ul className="mt-14 space-y-1">
             <li>
@@ -226,6 +251,22 @@ function SlideMenu() {
               >
                 Calendar
               </a>
+            </li>
+            <li>
+              <Link
+                href="/admin/products"
+                className="block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 dark:text-white hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700"
+              >
+                products
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/admin/categories"
+                className="block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 dark:text-white hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700"
+              >
+                categories
+              </Link>
             </li>
           </ul>
         </div>

@@ -4,9 +4,9 @@ import Link from "next/link";
 import Pagination from "./Pagination";
 
 async function ProductList() {
-  const limit = 3;
+  const limit = 10;
   const currentPage = 1;
-  const res = await getProducts(limit);
+  const res = await getProducts(limit, currentPage);
   const products = res.data.data;
   const pages = Math.ceil(products.length / limit);
 
@@ -19,18 +19,21 @@ async function ProductList() {
               key={product._id}
               className="p-4 flex flex-col justify-between items-center max-w-full transition-all duration-300 hover:-translate-y-2 hover:shadow-xl bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
             >
-              <div className="relative w-full h-[100px] md:h-[150px] lg:h-[200px]">
-                <Link href={`/products/${product._id}`}>
-                  <Image
-                    className="rounded-t-lg object-contain"
-                    src={product.imageCover}
-                    alt="product"
-                    loading="lazy"
-                    fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  />
-                </Link>
-              </div>
+              {/* <div className="relative w-full h-[100px] md:h-[150px] lg:h-[200px]"> */}
+              <Link
+                className="relative w-full h-[100px] md:h-[150px] lg:h-[200px]"
+                href={`/products/${product._id}`}
+              >
+                <Image
+                  className="rounded-t-lg object-contain"
+                  src={product.imageCover}
+                  alt="product"
+                  loading="lazy"
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                />
+              </Link>
+              {/* </div> */}
               <div className="mt-4">
                 <a href="#">
                   <h5 className="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white">
