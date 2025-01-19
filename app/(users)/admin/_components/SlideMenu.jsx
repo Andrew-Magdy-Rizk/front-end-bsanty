@@ -283,7 +283,7 @@ function SlideMenu() {
             </li>
           </ul>
         </div>
-        <div className="mx-auto py-6  sticky inset-x-0 bottom-0">
+        <div className="flex flex-col items-center py-6 sticky inset-x-0 bottom-0">
           <ThemesMode />
         </div>
         <div className="block md:hidden sticky inset-x-0 bottom-0 border-t border-gray-100 dark:border-gray-500 p-2">
