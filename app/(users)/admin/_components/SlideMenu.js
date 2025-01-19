@@ -5,12 +5,19 @@ import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import { FaShopify } from "react-icons/fa";
 import { MdCategory } from "react-icons/md";
+import { useState } from "react";
+import { MdOutlineMenuOpen } from "react-icons/md";
 
 function SlideMenu() {
   const auth = useSelector((state) => state.auth);
+  const [openMenu, setOpenMenu] = useState(false);
   const dispatch = useDispatch();
   return (
-    <aside className="hidden md:flex col-span-3 dark:bg-gray-800">
+    <aside
+      className={`fixed min-h-screen md:sticky z-10 md:flex col-span-3 bg-white dark:bg-gray-800 w-[200px] md:w-auto ${
+        openMenu ? "right-[calc(100%-199px)]" : "right-full"
+      } duration-500`}
+    >
       <div className="hidden lg:flex w-16 flex-col justify-between border-e dark:border-gray-500">
         <div>
           <div className="inline-flex size-16 items-center justify-center">
@@ -24,7 +31,7 @@ function SlideMenu() {
               <div className="py-4">
                 <a
                   href="#"
-                  className="t group relative flex justify-center rounded bg-blue-50 dark:bg-gray-400 px-2 py-1.5 text-blue-600"
+                  className="group relative flex justify-center rounded bg-blue-50 dark:bg-gray-400 px-2 py-1.5 text-blue-600"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -189,7 +196,13 @@ function SlideMenu() {
         </div>
       </div>
 
-      <div className="flex flex-1 flex-col justify-between border-e dark:border-gray-500">
+      <div className="relative flex flex-1 flex-col justify-between border-e dark:border-gray-500">
+        <div
+          onClick={() => setOpenMenu(!openMenu)}
+          className="absolute cursor-pointer md:hidden top-full -right-10 z-10 bg-gray-100 dark:bg-gray-700 rounded-2xl pl-10 py-2 px-2 dark:text-white"
+        >
+          <MdOutlineMenuOpen size={30} />
+        </div>
         <div className="px-4 py-6">
           <ul className="mt-14 space-y-1">
             <li>

@@ -2,17 +2,11 @@
 import Image from "next/image";
 import { FcBusinessman } from "react-icons/fc";
 import { IoIosNotificationsOutline } from "react-icons/io";
-import { MdOutlineMenu } from "react-icons/md";
 import { useSelector } from "react-redux";
 function Header() {
   const auth = useSelector((state) => state.auth);
   return (
     <header className="flex justify-between items-center p-4 shadow-sm border-b border-gray-200 dark:border-gray-500 dark:bg-gray-800">
-      <MdOutlineMenu
-        className="md:hidden cursor-pointer"
-        size={30}
-        color="gray"
-      />
       <Image src="/favicon.ico" alt="logo" width={60} height={60} />
       <input
         name="search"

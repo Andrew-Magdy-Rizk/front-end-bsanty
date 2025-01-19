@@ -16,6 +16,7 @@ const cairo = Cairo({
 export const metadata = {
   title: "Crafts - مكتبة كرافتس",
   description: "مكتبة كرافتس المتكاملة لتوزيع الجملة",
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({ children }) {
