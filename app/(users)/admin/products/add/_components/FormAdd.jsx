@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import Loading from "../../loading";
+import ErrorMessage from "@/app/_components/ErrorMessage";
 
 function FormAdd() {
   const pathName = usePathname();
@@ -21,6 +22,7 @@ function FormAdd() {
   });
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState([]);
   const auth = useSelector((state) => state.auth);
 
   const handelChange = (e) => {
@@ -34,6 +36,16 @@ function FormAdd() {
   const handelChangeImages = (e) => {
     const files = Array.from(e.target.files);
     setDate({ ...data, images: files });
+  };
+
+  const handelError = () => {
+    clearTimeout();
+    setTimeout(() => {
+      setErr([]);
+    }, 3000);
+    return (
+      err.length > 0 && err.map((err) => <ErrorMessage error={err} key={err} />)
+    );
   };
 
   const handelSubmit = async (e) => {
@@ -51,6 +63,7 @@ function FormAdd() {
       const res = await createProduct(form, token);
       console.log(res.data);
     } catch (error) {
+      setErr([...err, error.response.data]);
       console.log(error);
     }
     setLoading(false);
@@ -75,7 +88,14 @@ function FormAdd() {
       <section>
         <div className="container mx-auto p-6 dark:text-white">
           <form onSubmit={handelSubmit}>
-            <div className="flex justify-between items-center mb-4">
+            <div className="relative flex justify-between items-center mb-4">
+              {err.length > 0 && (
+                <ul className="fixed top-5 w-[50%]">
+                  <li className="flex flex-col gap-4 items-center justify-center">
+                    {handelError()}
+                  </li>
+                </ul>
+              )}
               <nav aria-label="Breadcrumb">
                 <ol className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-300">
                   <li>
