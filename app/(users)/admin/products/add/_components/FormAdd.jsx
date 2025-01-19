@@ -53,6 +53,24 @@ function FormAdd() {
     console.log(data);
     setLoading(true);
     try {
+      if (parseFloat(data.priceAfterDiscount) > parseFloat(data.price)) {
+        setErr([
+          ...err,
+          {
+            status: "field",
+            message: "priceAfterDiscount must be less than price",
+          },
+        ]);
+        setLoading(false);
+        return;
+      } else if (!data.imageCover) {
+        setErr([
+          ...err,
+          { status: "field", message: "imageCover is required" },
+        ]);
+        setLoading(false);
+        return;
+      }
       const form = new FormData();
       Object.keys(data).forEach(
         (key) => key !== "images" && form.append(key, data[key])
@@ -63,8 +81,18 @@ function FormAdd() {
       const res = await createProduct(form, token);
       console.log(res.data);
     } catch (error) {
-      setErr([...err, error.response.data]);
       console.log(error);
+      if (error?.response?.data !== undefined) {
+        setErr([...err, error.response.data]);
+      } else {
+        setErr([
+          ...err,
+          {
+            status: 500,
+            msg: "Server Error",
+          },
+        ]);
+      }
     }
     setLoading(false);
   };
@@ -86,18 +114,18 @@ function FormAdd() {
   ) : (
     <>
       <section>
+        {err.length > 0 && (
+          <ul className="absolute top-5 mx-auto w-full">
+            <li className="flex flex-col gap-4 items-center justify-center mx-10">
+              {handelError()}
+            </li>
+          </ul>
+        )}
         <div className="container mx-auto p-6 dark:text-white">
           <form onSubmit={handelSubmit}>
-            <div className="relative flex justify-between items-center mb-4">
-              {err.length > 0 && (
-                <ul className="fixed top-5 w-[50%]">
-                  <li className="flex flex-col gap-4 items-center justify-center">
-                    {handelError()}
-                  </li>
-                </ul>
-              )}
+            <div className="flex justify-between items-center mb-4">
               <nav aria-label="Breadcrumb">
-                <ol className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-300">
+                <ol className="flex items-center text-sm text-gray-600 dark:text-gray-300">
                   <li>
                     <Link
                       href={pathName.split("/").slice(0, 2).join("/")}
@@ -127,8 +155,8 @@ function FormAdd() {
                   {pathName.split("/").map(
                     (path) =>
                       path !== "" && (
-                        <>
-                          <span className="rtl:rotate-180">/</span>
+                        <div key={path} className="flex">
+                          <span className="rtl:rotate-180 mx-1">/</span>
                           <li>
                             <a
                               href="#"
@@ -137,30 +165,9 @@ function FormAdd() {
                               {path}
                             </a>
                           </li>
-                        </>
+                        </div>
                       )
                   )}
-
-                  {/* <li>
-                  <a
-                    href="#"
-                    className="block transition hover:text-gray-700 dark:hover:text-gray-200"
-                  >
-                    {" "}
-                    Shirts{" "}
-                  </a>
-                </li>
-
-                <span className="rtl:rotate-180">/</span>
-
-                <li>
-                  <a
-                    href="#"
-                    className="block transition hover:text-gray-700 dark:hover:text-gray-200"
-                  >
-                    Plain Tee
-                  </a>
-                </li> */}
                 </ol>
               </nav>
               <button
@@ -184,6 +191,8 @@ function FormAdd() {
                       onChange={handelChange}
                       type="text"
                       name="name"
+                      value={data.name}
+                      required
                       className="text-gray-900 rounded-lg focus:outline-primary-600 focus-visible:outline-none  block w-full px-3 py-2 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:outline-primary-500"
                       id="productName"
                       placeholder="Enter Name"
@@ -197,6 +206,9 @@ function FormAdd() {
                       onChange={handelChange}
                       className="text-gray-900 rounded-lg focus:outline-primary-600 focus-visible:outline-none  block w-full px-3 py-2 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:outline-primary-500"
                       id="productDescription"
+                      value={data.description}
+                      required
+                      minLength={20}
                       name="description"
                       rows="3"
                       placeholder="Enter Description"
@@ -214,6 +226,10 @@ function FormAdd() {
                       <input
                         onChange={handelChange}
                         type="number"
+                        step="any"
+                        value={data.price}
+                        min={1}
+                        required
                         className="text-gray-900 rounded-lg focus:outline-primary-600 focus-visible:outline-none  block w-full px-3 py-2 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:outline-primary-500"
                         name="price"
                         id="productPrice"
@@ -227,6 +243,9 @@ function FormAdd() {
                       <input
                         onChange={handelChange}
                         type="number"
+                        step="any"
+                        value={data.priceAfterDiscount}
+                        min={1}
                         className="appearance-none text-gray-900 rounded-lg focus:outline-primary-600 focus-visible:outline-none  block w-full px-3 py-2 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:outline-primary-500"
                         name="priceAfterDiscount"
                         id="discount"
@@ -254,14 +273,14 @@ function FormAdd() {
                     />
                   </div> */}
                   <div className="flex flex-col justify-center items-center gap-4">
-                    <div class="flex items-center justify-center w-full">
+                    <div className="flex items-center justify-center w-full">
                       <label
-                        for="imageCover"
-                        class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500"
+                        htmlFor="imageCover"
+                        className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500"
                       >
-                        <div class="flex flex-col items-center justify-center p-6 text-center">
+                        <div className="flex flex-col items-center justify-center p-6 text-center">
                           <svg
-                            class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
+                            className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
                             aria-hidden="true"
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
@@ -269,17 +288,19 @@ function FormAdd() {
                           >
                             <path
                               stroke="currentColor"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
                               d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
                             />
                           </svg>
-                          <p class="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                            <span class="font-semibold">Click to upload</span>{" "}
+                          <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                            <span className="font-semibold">
+                              Click to upload
+                            </span>{" "}
                             or drag and drop
                           </p>
-                          <p class="text-xs text-gray-500 dark:text-gray-400">
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
                             SVG, PNG, JPG or GIF (MAX. 800x400px)
                           </p>
                         </div>
@@ -294,14 +315,14 @@ function FormAdd() {
                       </label>
                     </div>
 
-                    <div class="flex items-center justify-center w-full">
+                    <div className="flex items-center justify-center w-full">
                       <label
-                        for="productImages"
-                        class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500"
+                        htmlFor="productImages"
+                        className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500"
                       >
-                        <div class="flex flex-col items-center justify-center p-6 text-center">
+                        <div className="flex flex-col items-center justify-center p-6 text-center">
                           <svg
-                            class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
+                            className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
                             aria-hidden="true"
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
@@ -309,17 +330,19 @@ function FormAdd() {
                           >
                             <path
                               stroke="currentColor"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
                               d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
                             />
                           </svg>
-                          <p class="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                            <span class="font-semibold">Click to upload</span>{" "}
+                          <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                            <span className="font-semibold">
+                              Click to upload
+                            </span>{" "}
                             or drag and drop
                           </p>
-                          <p class="text-xs text-gray-500 dark:text-gray-400">
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
                             SVG, PNG, JPG or GIF (MAX.count 5 Image)
                           </p>
                         </div>

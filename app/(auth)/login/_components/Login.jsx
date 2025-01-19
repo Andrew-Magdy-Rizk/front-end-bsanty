@@ -39,7 +39,17 @@ function Login() {
         route.replace("/");
       }
     } catch (error) {
-      setErr([...err, error.response.data]);
+      if (error?.response?.data !== undefined) {
+        setErr([...err, error.response.data]);
+      } else {
+        setErr([
+          ...err,
+          {
+            status: 500,
+            msg: "Server Error",
+          },
+        ]);
+      }
     }
     setLoading(false);
   };

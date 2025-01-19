@@ -54,18 +54,17 @@ function SignUp() {
       setLoading(false);
       router.push("/login");
     } catch (error) {
-      setErr([...err, ...error.response.data.errors]);
-      console.log(error);
-      setLoading(false);
-      //   if (errors) {
-      //     errors.forEach(async (error) => {
-      //       await Swal.fire({
-      //         icon: "error",
-      //         title: error.msg,
-      //         text: "Something went wrong!",
-      //       });
-      //     });
-      //   }
+      if (error?.response?.data !== undefined) {
+        setErr([...err, error.response.data]);
+      } else {
+        setErr([
+          ...err,
+          {
+            status: 500,
+            msg: "Server Error",
+          },
+        ]);
+      }
     }
   };
 
@@ -100,9 +99,10 @@ function SignUp() {
                   type="text"
                   name="name"
                   id="name"
+                  value={data.name}
                   className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:outline-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:outline-blue-500 dark:focus:border-blue-500"
                   placeholder="Full Name"
-                  required="required"
+                  required
                   onChange={handleChange}
                 ></input>
               </div>
@@ -117,9 +117,10 @@ function SignUp() {
                   type="email"
                   name="email"
                   id="email"
+                  value={data.email}
                   className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:outline-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:outline-blue-500 dark:focus:border-blue-500"
                   placeholder="name@company.com"
-                  required="required"
+                  required
                   onChange={handleChange}
                 ></input>
               </div>
@@ -134,9 +135,10 @@ function SignUp() {
                   type="password"
                   name="password"
                   id="password"
+                  value={data.password}
                   placeholder="••••••••"
                   className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:outline-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:outline-blue-500 dark:focus:border-blue-500"
-                  required=""
+                  required
                   onChange={handleChange}
                 ></input>
               </div>
@@ -151,9 +153,10 @@ function SignUp() {
                   type="password"
                   name="confirmPassword"
                   id="confirmPassword"
+                  value={data.confirmPassword}
                   placeholder="••••••••"
                   className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:outline-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:outline-blue-500 dark:focus:border-blue-500"
-                  required="required"
+                  required
                   onChange={handleChange}
                 ></input>
               </div>
@@ -165,7 +168,7 @@ function SignUp() {
                       aria-describedby="remember"
                       type="checkbox"
                       className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-2 focus:outline-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:outline-primary-600 dark:ring-offset-gray-800"
-                      required=""
+                      required
                       onChange={handleChange}
                     ></input>
                   </div>
