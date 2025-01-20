@@ -94,6 +94,7 @@ function FormAdd() {
         ]);
       }
     }
+
     setLoading(false);
   };
   const getCategory = async () => {

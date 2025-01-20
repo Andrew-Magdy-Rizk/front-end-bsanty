@@ -4,7 +4,7 @@ const nextConfig = {
     domains: [
       "server-bsnty.vercel.app",
       "res.cloudinary.com",
-      "localhost:3000",
+      "localhost:5000",
     ],
   },
 };

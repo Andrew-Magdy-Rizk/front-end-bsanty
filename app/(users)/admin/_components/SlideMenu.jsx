@@ -286,7 +286,7 @@ function SlideMenu() {
         <div className="flex flex-col items-center py-6 sticky inset-x-0 bottom-0">
           <ThemesMode />
         </div>
-        <div className="block md:hidden sticky inset-x-0 bottom-0 border-t border-gray-100 dark:border-gray-500 p-2">
+        <div className="block lg:hidden sticky inset-x-0 bottom-0 border-t border-gray-100 dark:border-gray-500 p-2">
           <form action="#">
             <Link
               href="/login"
