@@ -1,18 +1,39 @@
 "use client";
 import ThemesMode from "@/app/_components/ThemesMode";
-import { logoutReducer } from "@/app/_rtk/slices/authReducers";
+import { loginReducer, logoutReducer } from "@/app/_rtk/slices/authReducers";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import { FaShopify } from "react-icons/fa";
 import { MdCategory } from "react-icons/md";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MdOutlineMenuOpen } from "react-icons/md";
+import Loading from "../products/loading";
+import Cookies from "js-cookie";
 
 function SlideMenu() {
   const auth = useSelector((state) => state.auth);
   const [openMenu, setOpenMenu] = useState(false);
   const dispatch = useDispatch();
-  return (
+
+  const handelUser = () => {
+    let auth = Cookies.get("auth");
+    if (auth) {
+      auth = JSON.parse(auth);
+      dispatch(
+        loginReducer({
+          data: auth.data,
+          token: auth.token,
+        })
+      );
+    }
+  };
+
+  useEffect(() => {
+    handelUser();
+  }, []);
+  return auth.loading ? (
+    <Loading />
+  ) : (
     <aside
       className={`fixed min-h-screen md:sticky z-10 md:flex col-span-3 bg-white dark:bg-gray-800 w-[200px] md:w-auto ${
         openMenu ? "right-[calc(100%-199px)]" : "right-full"
@@ -21,9 +42,9 @@ function SlideMenu() {
       <div className="hidden lg:flex w-16 flex-col justify-between border-e dark:border-gray-500">
         <div>
           <div className="inline-flex size-16 items-center justify-center">
-            <span className="grid size-10 place-content-center rounded-lg text-xs text-gray-600">
+            <div className="grid size-10 place-content-center rounded-lg text-xs text-gray-600">
               {auth?.user?.name[0] || "A"}
-            </span>
+            </div>
           </div>
 
           <div className="border-t border-gray-100 dark:border-gray-500">

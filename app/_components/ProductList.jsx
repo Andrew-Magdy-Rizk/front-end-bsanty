@@ -1,23 +1,32 @@
+"use client";
 import Image from "next/image";
-import { getProducts } from "@/app/_axios/api/products";
 import Link from "next/link";
 import Pagination from "./Pagination";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { ProductsThunk } from "../_rtk/slices/productReducers";
+import Loading from "../loading";
+import SkeletonList from "./SkeletonList";
 
-async function ProductList() {
-  const limit = 10;
-  const currentPage = 1;
-  const res = await getProducts(limit, currentPage);
-  const products = res.data.data;
-  const pages = Math.ceil(products.length / limit);
-  console.log(products);
+function ProductList() {
+  const state = useSelector((state) => state.products);
+  const dispatch = useDispatch();
 
-  return (
+  useEffect(() => {
+    dispatch(ProductsThunk());
+  }, []);
+
+  return state.loading ? (
+    <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-6 justify-center align-middle gap-4 py-10">
+      <SkeletonList />
+    </div>
+  ) : (
     <>
       <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-6 justify-center align-middle gap-4 py-10">
-        {products.length < 1 ? (
+        {state.products.length < 1 ? (
           <div>No Products Found</div>
         ) : (
-          products.map((product) => {
+          state.products.map((product) => {
             return (
               <div
                 key={product._id}
@@ -31,7 +40,7 @@ async function ProductList() {
                   <Image
                     className="rounded-t-lg object-contain"
                     src={product.imageCover}
-                    alt="product"
+                    alt="Product Image"
                     loading="lazy"
                     fill
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

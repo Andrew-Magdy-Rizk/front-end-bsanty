@@ -7,8 +7,9 @@ import { TfiClose } from "react-icons/tfi";
 import { useEffect, useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import { logoutReducer } from "../_rtk/slices/authReducers";
+import { loginReducer, logoutReducer } from "../_rtk/slices/authReducers";
 import { FiLogOut } from "react-icons/fi";
+import Cookies from "js-cookie";
 
 export default function Header() {
   const auth = useSelector((state) => state.auth);
@@ -27,6 +28,24 @@ export default function Header() {
     dipatch(logoutReducer());
     setOpenMenu(!openMenu);
   };
+
+  const handelUser = () => {
+    let auth = Cookies.get("auth");
+    if (auth) {
+      auth = JSON.parse(auth);
+      dipatch(
+        loginReducer({
+          data: auth.data,
+          token: auth.token,
+        })
+      );
+    }
+  };
+
+  useEffect(() => {
+    handelUser();
+  }, []);
+
   return (
     <header className="shadow dark:shadow-gray-600 bg-white dark:bg-gray-900">
       <div className="flex justify-between gap-6 items-center py-2 px-4">
@@ -85,13 +104,7 @@ export default function Header() {
             </li>
             {auth.user !== null ? (
               <>
-                {/* <li className="order-first lg:order-none flex flex-col justify-center items-center mx-6 text-primary-600 dark:text-primary-400">
-                  <FaUserCircle size={30} />
-                  <span className="font-semibold">
-                    {auth?.user?.name || "user"}
-                  </span>
-                </li> */}
-                <div className="relative order-first lg:order-none">
+                <li className="relative order-first lg:order-none">
                   <div className="inline-flex items-center overflow-hidden rounded-md border bg-white dark:border-gray-800 dark:bg-gray-900">
                     <a
                       href="#"
@@ -138,7 +151,7 @@ export default function Header() {
                       </Link>
                     </div>
                   </div>
-                </div>
+                </li>
 
                 <li
                   className={`text-gray-800 font-medium dark:text-gray-200 px-6 py-2 transition-colors duration-300`}

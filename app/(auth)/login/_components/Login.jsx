@@ -2,14 +2,13 @@
 import { login } from "@/app/_axios/api/auth";
 import Link from "next/link";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { loginReducer } from "@/app/_rtk/slices/authReducers";
+import { useDispatch, useSelector } from "react-redux";
+import { actLogin, clearError } from "@/app/_rtk/slices/authReducers";
 import { useRouter } from "next/navigation";
 import ErrorMessage from "@/app/_components/ErrorMessage";
 function Login() {
+  const auth = useSelector((state) => state.auth);
   const [data, setData] = useState({ email: "", password: "" });
-  const [loading, setLoading] = useState(false);
-  const [err, setErr] = useState([]);
 
   const dispatch = useDispatch();
   const route = useRouter();
@@ -17,49 +16,43 @@ function Login() {
     const { name, value } = e.target;
     setData({ ...data, [name]: value });
   };
-  const handelError = () => {
-    clearTimeout();
-    setTimeout(() => {
-      setErr([]);
-    }, 3000);
-    return (
-      err.length > 0 && err.map((err) => <ErrorMessage error={err} key={err} />)
-    );
-  };
+  // const handelError = () => {
+  //   clearTimeout();
+  //   setTimeout(() => {
+  //     setErr([]);
+  //   }, 3000);
+  //   return (
+  //     err.length > 0 && err.map((err) => <ErrorMessage error={err} key={err} />)
+  //   );
+  // };
 
   const handelSubmit = async (e) => {
     e.preventDefault();
     try {
-      setLoading(true);
-      const res = await login(data);
-      dispatch(loginReducer(res.data));
-      if (res.data.data.role === "admin") {
-        route.replace("/admin");
-      } else {
-        route.replace("/");
+      const res = await dispatch(actLogin(data));
+      if (res.type === "auth/actLogin/fulfilled") {
+        if (res.payload?.data?.data?.role === "admin") {
+          route.replace("/admin");
+        } else if (res.payload?.data?.data?.role === "user") {
+          console.log("true");
+          route.replace("/");
+        }
+      } else if (res.type === "auth/actLogin/rejected") {
+        setTimeout(() => {
+          dispatch(clearError());
+        }, 3000);
       }
     } catch (error) {
-      if (error?.response?.data !== undefined) {
-        setErr([...err, error.response.data]);
-      } else {
-        setErr([
-          ...err,
-          {
-            status: 500,
-            msg: "Server Error",
-          },
-        ]);
-      }
+      console.log(error);
     }
-    setLoading(false);
   };
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-        {err.length > 0 && (
+        {auth.error && (
           <ul className="fixed top-5 w-[90%]">
             <div className="flex flex-col gap-4 items-center justify-center">
-              {handelError()}
+              <ErrorMessage error={auth.error} />
             </div>
           </ul>
         )}
@@ -138,10 +131,10 @@ function Login() {
               </div>
               <button
                 type="submit"
-                disabled={loading}
+                disabled={auth.loading}
                 className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
               >
-                {loading ? "Loading..." : "Sign in"}
+                {auth.loading ? "Loading..." : "Sign in"}
               </button>
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                 Don’t have an account yet?{" "}

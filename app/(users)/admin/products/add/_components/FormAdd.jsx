@@ -1,7 +1,7 @@
 "use client";
 
-import { getCategories } from "@/app/_axios/api/categories";
-import { createProduct } from "@/app/_axios/api/products";
+import { getCategoriesApi } from "@/app/_axios/api/categories";
+import { createProductApi } from "@/app/_axios/api/products";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -78,7 +78,7 @@ function FormAdd() {
       data.images.forEach((image) => form.append("images", image));
       console.log(form);
       const token = auth.token;
-      const res = await createProduct(form, token);
+      const res = await createProductApi(form, token);
       console.log(res.data);
     } catch (error) {
       console.log(error);
@@ -99,7 +99,7 @@ function FormAdd() {
   };
   const getCategory = async () => {
     try {
-      const res = await getCategories();
+      const res = await getCategoriesApi();
       setCategories(res.data.data);
       setDate({ ...data, category: res.data.data[0]._id });
     } catch (error) {
@@ -260,19 +260,7 @@ function FormAdd() {
               <div className="flex flex-col gap-4 w-full lg:w-auto">
                 <div className="p-4 bg-gray-100 rounded-lg dark:bg-gray-800">
                   <h3 className="text-lg font-medium mb-3">Product Images</h3>
-                  {/* <div className="mb-3">
-                    <label htmlFor="productPrice" className="block mb-1">
-                      imageCover
-                    </label>
-                    <input
-                      onChange={handelChange}
-                      type="file"
-                      className=" "
-                      name="imageCover"
-                      id="productPrice"
-                      placeholder="Enter Price"
-                    />
-                  </div> */}
+
                   <div className="flex flex-col justify-center items-center gap-4">
                     <div className="flex items-center justify-center w-full">
                       <label
@@ -358,21 +346,6 @@ function FormAdd() {
                       </label>
                     </div>
                   </div>
-
-                  {/* <div className="mb-3">
-                    <label htmlFor="productPrice" className="block mb-1">
-                      image
-                    </label>
-                    <input
-                      onChange={handelChangeImages}
-                      type="file"
-                      multiple
-                      className="form-control"
-                      name="images"
-                      id="productPrice"
-                      placeholder="Enter Price"
-                    />
-                  </div> */}
                 </div>
 
                 <div className="p-4 bg-gray-100 rounded-lg dark:bg-gray-800">

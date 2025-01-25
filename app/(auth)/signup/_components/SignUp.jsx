@@ -1,12 +1,14 @@
 "use client";
-import { signup } from "@/app/_axios/api/auth";
 import ErrorMessage from "@/app/_components/ErrorMessage";
+import { actRegister, clearError } from "@/app/_rtk/slices/authReducers";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Swal from "sweetalert2";
 
 function SignUp() {
+  const auth = useSelector((state) => state.auth);
   const [data, setData] = useState({
     name: "",
     email: "",
@@ -14,9 +16,9 @@ function SignUp() {
     confirmPassword: "",
   });
   const [remember, setRemember] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [err, setErr] = useState([]);
+
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,24 +26,10 @@ function SignUp() {
     setRemember(!remember);
   };
 
-  const handelError = () => {
-    clearTimeout();
-    setTimeout(() => {
-      setErr([]);
-    }, 3000);
-    return (
-      err.length > 0 &&
-      err.map((error) => <ErrorMessage error={error} key={err} />)
-    );
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
 
     if (data.password !== data.confirmPassword) {
-      setErr(...err, { state: "field", message: "Passwords do not match" });
-      setLoading(false);
       return Swal.fire({
         icon: "error",
         title: "password does not match!",
@@ -49,32 +37,26 @@ function SignUp() {
       });
     }
     try {
-      const res = await signup(data);
-      console.log(res);
-      setLoading(false);
-      router.push("/login");
-    } catch (error) {
-      if (error?.response?.data !== undefined) {
-        setErr([...err, error.response.data]);
-      } else {
-        setErr([
-          ...err,
-          {
-            status: 500,
-            msg: "Server Error",
-          },
-        ]);
+      const res = await dispatch(actRegister(data));
+      if (res.type == "auth/actRegister/fulfilled") {
+        router.push("/login");
+      } else if (res.type === "auth/actRegister/rejected") {
+        setTimeout(() => {
+          dispatch(clearError());
+        }, 3000);
       }
+    } catch (error) {
+      console.log(error);
     }
   };
 
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-        {err.length > 0 && (
+        {auth?.error && (
           <ul className="fixed top-5 w-[90%]">
             <div className="flex flex-col gap-4 items-center justify-center">
-              {handelError()}
+              <ErrorMessage error={auth?.error} />
             </div>
           </ul>
         )}
@@ -168,7 +150,6 @@ function SignUp() {
                       aria-describedby="remember"
                       type="checkbox"
                       className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-2 focus:outline-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:outline-primary-600 dark:ring-offset-gray-800"
-                      required
                       onChange={handleChange}
                     ></input>
                   </div>
@@ -186,7 +167,7 @@ function SignUp() {
                 type="submit"
                 className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
               >
-                {loading ? "loading..." : "Sign up"}
+                {auth?.loading ? "loading..." : "Sign up"}
               </button>
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                 Don’t have an account yet?{" "}

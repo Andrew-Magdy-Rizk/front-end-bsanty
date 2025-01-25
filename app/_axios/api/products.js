@@ -1,13 +1,13 @@
 import axiosInstance from "../axios-instance";
 
-export const getProducts = (limit, page) =>
+export const getProductsApi = (limit = 10, page = 1) =>
   axiosInstance.get(
     `/products${limit && `?limit=${limit}`}${page && `&page=${page}`}`
   );
 
-export const getProduct = (id) => axiosInstance.get(`/products/${id}`);
+export const getProductApi = (id) => axiosInstance.get(`/products/${id}`);
 
-export const createProduct = (data, token) =>
+export const createProductApi = (data, token) =>
   axiosInstance.post(`/products`, data, {
     headers: {
       auth: `Bearer ${token}`,
@@ -15,6 +15,11 @@ export const createProduct = (data, token) =>
     },
   });
 
-export const updateProduct = (id) => axiosInstance.put(`/products/${id}`);
+export const updateProductApi = (id) => axiosInstance.put(`/products/${id}`);
 
-export const deleteProduct = (id) => axiosInstance.delete(`/products/${id}`);
+export const deleteProductApi = (id, token) =>
+  axiosInstance.delete(`/products/${id}`, {
+    headers: {
+      auth: `Bearer ${token}`,
+    },
+  });
