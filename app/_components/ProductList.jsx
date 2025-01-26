@@ -24,7 +24,9 @@ function ProductList() {
     <>
       <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-6 justify-center align-middle gap-4 py-10">
         {state.products.length < 1 ? (
-          <div>No Products Found</div>
+          <div className="text-center text-gray-500 dark:text-white">
+            No Products Found
+          </div>
         ) : (
           state.products.map((product) => {
             return (
