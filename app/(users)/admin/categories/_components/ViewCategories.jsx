@@ -3,11 +3,14 @@
 import { useSelector, useDispatch } from "react-redux";
 import {
   categoryThunk,
+  clearError,
   deleteCategory,
+  deleteCategoryThunk,
 } from "@/app/_rtk/slices/categoryReducers";
 import { useEffect } from "react";
 import Pagination from "@/app/_components/Pagination";
 import Image from "next/image";
+import ErrorMessage from "@/app/_components/ErrorMessage";
 
 function ViewCategories() {
   const state = useSelector((state) => state.categories);
@@ -19,11 +22,27 @@ function ViewCategories() {
   }, [dispatch]);
 
   const handelDelete = (id) => {
-    dispatch(deleteCategory({ id, token: auth.token }));
+    dispatch(deleteCategoryThunk({ id, token: auth.token }));
+    dispatch(deleteCategory({ id }));
+  };
+
+  const handelError = () => {
+    clearTimeout();
+    setTimeout(() => {
+      dispatch(clearError());
+    }, 3000);
+    return <ErrorMessage error={state.error} />;
   };
 
   return (
     <section className="py-10 min-h-[100vh] relative dark:bg-gray-900">
+      {state?.error && (
+        <ul className="absolute top-5 mx-auto w-full">
+          <li className="flex flex-col gap-4 items-center justify-center mx-10">
+            {handelError()}
+          </li>
+        </ul>
+      )}
       <div className="w-full max-w-7xl px-4 md:px-5 lg-6 mx-auto">
         <h2 className="title font-manrope font-bold text-3xl leading-10 mb-10 text-center text-black dark:text-white">
           Categories
@@ -82,7 +101,7 @@ function ViewCategories() {
             </div>
           ))
         ) : (
-          <div className="text-center text-2xl font-semibold dark:text-white mb-6">
+          <div className="text-center text-xl font-medium leading-9 text-gray-900 dark:text-white mb-6">
             No Categories Found
           </div>
         )}

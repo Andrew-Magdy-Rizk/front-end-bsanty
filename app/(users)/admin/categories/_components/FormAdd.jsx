@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Loading from "@/app/(users)/admin/products/loading";
 import ErrorMessage from "@/app/_components/ErrorMessage";
 import { getCategories } from "@/app/_rtk/slices/categoryReducers";
+import SuccessMsg from "@/app/_components/SuccessMsg";
 
 function FormAdd() {
   const pathName = usePathname();
@@ -18,6 +19,7 @@ function FormAdd() {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState([]);
+  const [success, setSuccess] = useState(false);
   const auth = useSelector((state) => state.auth);
 
   const handelChange = (e) => {
@@ -38,6 +40,13 @@ function FormAdd() {
     );
   };
 
+  const handelSuccess = () => {
+    setSuccess(true);
+    setTimeout(() => {
+      setSuccess(false);
+    }, 3000);
+  };
+
   const handelSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -53,6 +62,7 @@ function FormAdd() {
       const token = auth.token;
       const res = await createCategoryApi({ form, token });
       dispatch(getCategories(res.data));
+      handelSuccess();
     } catch (error) {
       if (error?.response?.data !== undefined) {
         setErr([...err, error.response.data]);
@@ -75,6 +85,14 @@ function FormAdd() {
   ) : (
     <>
       <section>
+        <div
+          className={`duration-500 ease-in-out transform -translate-y-full opacity-100 fixed ${
+            success ? "top-[20%]" : "top-0"
+          } left-1/2 -translate-x-1/2 w-2/3 z-10 p-4`}
+        >
+          <SuccessMsg msg="Category" />
+        </div>
+
         {err.length > 0 && (
           <ul className="absolute top-5 mx-auto w-full">
             <li className="flex flex-col gap-4 items-center justify-center mx-10">

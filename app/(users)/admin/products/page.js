@@ -172,11 +172,22 @@ function Page() {
                     </div>
 
                     <div className="flex items-center justify-end gap-4">
-                      <h6 className="text-black font-manrope font-bold text-2xl leading-9 text-right dark:text-red-300">
-                        ${product?.price}
+                      <h6
+                        className={`text-black ${
+                          product?.priceAfterDiscount
+                            ? "opacity-50 line-through"
+                            : "opacity-100"
+                        } font-manrope font-bold text-2xl leading-9 text-right dark:text-red-300`}
+                      >
+                        EGY {product?.price}
                       </h6>
-                      <h6 className="text-black font-manrope font-bold text-2xl leading-9 text-right dark:text-red-300">
-                        ${product?.priceAfterDiscount}
+                      <h6
+                        className={`text-black ${
+                          product?.priceAfterDiscount && "text-green-700"
+                        } font-manrope font-bold text-2xl leading-9 text-right dark:text-red-300`}
+                      >
+                        {product?.priceAfterDiscount &&
+                          `EGY ${product?.priceAfterDiscount}`}
                       </h6>
                     </div>
                   </div>

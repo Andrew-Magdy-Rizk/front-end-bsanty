@@ -18,6 +18,20 @@ export const categoryThunk = createAsyncThunk(
   }
 );
 
+export const deleteCategoryThunk = createAsyncThunk(
+  "category/DeleteCategoryThunk",
+  async (data, thunk) => {
+    const { rejectWithValue } = thunk;
+    try {
+      const res = await deleteCategoryApi(data.id, data.token);
+      console.log(res);
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err);
+    }
+  }
+);
+
 const categorySlice = createSlice({
   initialState: {
     category: {},
@@ -34,7 +48,6 @@ const categorySlice = createSlice({
       state.categories = [...state.categories, action.payload.data];
     },
     deleteCategory: (state, action) => {
-      deleteCategoryApi(action.payload.id, action.payload.token);
       state.categories = state.categories.filter(
         (category) => category._id !== action.payload.id
       );
@@ -43,7 +56,9 @@ const categorySlice = createSlice({
       state.error = null;
     },
   },
+  //
   extraReducers: (builder) => {
+    // add
     builder.addCase(categoryThunk.pending, (state) => {
       state.loading = true;
     });
@@ -53,6 +68,21 @@ const categorySlice = createSlice({
     });
     builder.addCase(categoryThunk.rejected, (state, action) => {
       state.error = action.payload;
+      state.loading = false;
+    });
+
+    // delete
+    builder.addCase(deleteCategoryThunk.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(deleteCategoryThunk.fulfilled, (state, action) => {
+      state.loading = false;
+      state.categories = state.categories.filter(
+        (category) => category._id !== action.payload.id
+      );
+    });
+    builder.addCase(deleteCategoryThunk.rejected, (state, action) => {
+      state.error = action.payload.response.data;
       state.loading = false;
     });
   },

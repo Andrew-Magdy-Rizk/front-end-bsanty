@@ -9,9 +9,17 @@ import { useDispatch, useSelector } from "react-redux";
 import Loading from "../../loading";
 import ErrorMessage from "@/app/_components/ErrorMessage";
 import { categoryThunk } from "@/app/_rtk/slices/categoryReducers";
+import SuccessMsg from "@/app/_components/SuccessMsg";
 
 function FormAdd() {
   const pathName = usePathname();
+
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [err, setErr] = useState([]);
+  const auth = useSelector((state) => state.auth);
+  const state = useSelector((state) => state.categories);
+  const dispatch = useDispatch();
   const [data, setDate] = useState({
     name: "",
     description: "",
@@ -21,11 +29,6 @@ function FormAdd() {
     images: [],
     category: "",
   });
-  const [loading, setLoading] = useState(false);
-  const [err, setErr] = useState([]);
-  const auth = useSelector((state) => state.auth);
-  const state = useSelector((state) => state.categories);
-  const dispatch = useDispatch();
 
   const handelChange = (e) => {
     const { name, value } = e.target;
@@ -44,17 +47,28 @@ function FormAdd() {
     clearTimeout();
     setTimeout(() => {
       setErr([]);
+      setSuccess(false);
     }, 3000);
     return (
       err.length > 0 && err.map((err) => <ErrorMessage error={err} key={err} />)
     );
   };
 
+  const handelSuccess = async () => {
+    setSuccess(true);
+    setTimeout(() => {
+      setSuccess(false);
+    }, 3000);
+  };
+
   const handelSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      if (parseFloat(data.priceAfterDiscount) > parseFloat(data.price)) {
+      if (
+        parseFloat(data.priceAfterDiscount) > parseFloat(data.price) &&
+        data.priceAfterDiscount !== ""
+      ) {
         setErr([
           ...err,
           {
@@ -72,13 +86,18 @@ function FormAdd() {
         setLoading(false);
         return;
       }
+
       const form = new FormData();
+      console.log(data);
       Object.keys(data).forEach(
         (key) => key !== "images" && form.append(key, data[key])
       );
       data.images.forEach((image) => form.append("images", image));
       const token = auth.token;
       const res = await createProductApi(form, token);
+      handelSuccess();
+
+      console.log(res);
     } catch (error) {
       if (error?.response?.data !== undefined) {
         setErr([...err, error.response.data]);
@@ -87,7 +106,7 @@ function FormAdd() {
           ...err,
           {
             status: 500,
-            msg: "Server Error",
+            msg: "image upload failed, please try again later",
           },
         ]);
       }
@@ -97,19 +116,34 @@ function FormAdd() {
   };
   const getCategory = async () => {
     try {
-      const res = await dispatch(categoryThunk());
-      setDate({ ...data, category: res.data.data[0]._id });
-    } catch (error) {}
+      await dispatch(categoryThunk());
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     getCategory();
   }, []);
-  return auth.loading || state.loading ? (
+
+  useEffect(() => {
+    setDate({ ...data, category: state.categories[0]?._id });
+  }, [state.categories]);
+
+  return loading || state.loading || auth.loading ? (
     <Loading />
   ) : (
     <>
       <section>
+        <div
+          className={`duration-500 ease-in-out transform -translate-y-full opacity-100 fixed ${
+            success ? "top-[20%]" : "top-0"
+          } left-1/2 -translate-x-1/2 w-2/3 z-10 p-4`}
+        >
+          <SuccessMsg msg="Product" />
+        </div>
         {err.length > 0 && (
           <ul className="absolute top-5 mx-auto w-full">
             <li className="flex flex-col gap-4 items-center justify-center mx-10">
