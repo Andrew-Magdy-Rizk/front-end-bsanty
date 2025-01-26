@@ -5,9 +5,10 @@ import { createProductApi } from "@/app/_axios/api/products";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Loading from "../../loading";
 import ErrorMessage from "@/app/_components/ErrorMessage";
+import { categoryThunk } from "@/app/_rtk/slices/categoryReducers";
 
 function FormAdd() {
   const pathName = usePathname();
@@ -20,10 +21,11 @@ function FormAdd() {
     images: [],
     category: "",
   });
-  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState([]);
   const auth = useSelector((state) => state.auth);
+  const state = useSelector((state) => state.categories);
+  const dispatch = useDispatch();
 
   const handelChange = (e) => {
     const { name, value } = e.target;
@@ -50,7 +52,6 @@ function FormAdd() {
 
   const handelSubmit = async (e) => {
     e.preventDefault();
-    console.log(data);
     setLoading(true);
     try {
       if (parseFloat(data.priceAfterDiscount) > parseFloat(data.price)) {
@@ -76,12 +77,9 @@ function FormAdd() {
         (key) => key !== "images" && form.append(key, data[key])
       );
       data.images.forEach((image) => form.append("images", image));
-      console.log(form);
       const token = auth.token;
       const res = await createProductApi(form, token);
-      console.log(res.data);
     } catch (error) {
-      console.log(error);
       if (error?.response?.data !== undefined) {
         setErr([...err, error.response.data]);
       } else {
@@ -99,18 +97,15 @@ function FormAdd() {
   };
   const getCategory = async () => {
     try {
-      const res = await getCategoriesApi();
-      setCategories(res.data.data);
+      const res = await dispatch(categoryThunk());
       setDate({ ...data, category: res.data.data[0]._id });
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   useEffect(() => {
     getCategory();
   }, []);
-  return loading ? (
+  return auth.loading || state.loading ? (
     <Loading />
   ) : (
     <>
@@ -359,7 +354,7 @@ function FormAdd() {
                       id="category"
                       className="appearance-none text-gray-900 rounded-lg focus:outline-primary-600 focus-visible:outline-none  block w-full px-3 py-2 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:outline-primary-500"
                     >
-                      {categories.map((category) => (
+                      {state.categories.map((category) => (
                         <option
                           key={category._id}
                           value={category._id}

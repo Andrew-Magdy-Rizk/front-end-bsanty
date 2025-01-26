@@ -40,6 +40,9 @@ const productSlice = createSlice({
         (product) => product._id !== action.payload.id
       );
     },
+    clearError: (state) => {
+      state.error = null;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(ProductsThunk.pending, (state) => {
@@ -57,6 +60,6 @@ const productSlice = createSlice({
   },
 });
 
-export const { getProductById, getProducts, deleteProduct } =
+export const { getProductById, getProducts, deleteProduct, clearError } =
   productSlice.actions;
 export default productSlice.reducer;

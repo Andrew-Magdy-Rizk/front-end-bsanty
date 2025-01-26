@@ -1,6 +1,10 @@
+import {
+  deleteCategoryApi,
+  getCategoriesApi,
+} from "@/app/_axios/api/categories";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-const categoryThunk = createAsyncThunk(
+export const categoryThunk = createAsyncThunk(
   "category/categoryThunk",
   async (data, thunk) => {
     const { rejectWithValue } = thunk;
@@ -27,7 +31,16 @@ const categorySlice = createSlice({
       state.category = action.payload;
     },
     getCategories: (state, action) => {
-      state.categories = action.payload;
+      state.categories = [...state.categories, action.payload.data];
+    },
+    deleteCategory: (state, action) => {
+      deleteCategoryApi(action.payload.id, action.payload.token);
+      state.categories = state.categories.filter(
+        (category) => category._id !== action.payload.id
+      );
+    },
+    clearError: (state) => {
+      state.error = null;
     },
   },
   extraReducers: (builder) => {
@@ -44,3 +57,7 @@ const categorySlice = createSlice({
     });
   },
 });
+
+export const { getCategoryById, getCategories, deleteCategory, clearError } =
+  categorySlice.actions;
+export default categorySlice.reducer;

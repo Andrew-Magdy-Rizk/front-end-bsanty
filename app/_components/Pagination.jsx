@@ -7,7 +7,11 @@ function Pagination() {
   const dispatch = useDispatch();
 
   const handleNextPageChange = () => {
-    if (pagination.currentPage === pagination.totalPages) return;
+    if (
+      pagination.currentPage === pagination.totalPages ||
+      pagination.totalPages === 0
+    )
+      return;
     dispatch(ProductsThunk({ page: pagination.currentPage + 1 }));
   };
   const handlePrevPageChange = () => {

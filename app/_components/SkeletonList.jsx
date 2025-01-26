@@ -1,6 +1,5 @@
 function SkeletonList() {
   const skeleton = Array.from({ length: 10 }).map((_, i) => i);
-  console.log(skeleton);
   return skeleton.map((item) => (
     <div
       key={item}

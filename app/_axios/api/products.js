@@ -2,7 +2,9 @@ import axiosInstance from "../axios-instance";
 
 export const getProductsApi = (limit = 10, page = 1) =>
   axiosInstance.get(
-    `/products${limit && `?limit=${limit}`}${page && `&page=${page}`}`
+    `/products${limit !== undefined && `?limit=${limit}`}${
+      page !== undefined && `&page=${page}`
+    }`
   );
 
 export const getProductApi = (id) => axiosInstance.get(`/products/${id}`);
