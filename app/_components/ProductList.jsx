@@ -4,7 +4,7 @@ import Link from "next/link";
 import Pagination from "./Pagination";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { ProductsThunk } from "../_rtk/slices/productReducers";
+import { getProduct, ProductsThunk } from "../_rtk/slices/productReducers";
 import Loading from "../loading";
 import SkeletonList from "./SkeletonList";
 
@@ -36,8 +36,9 @@ function ProductList() {
               >
                 {/* <div className="relative w-full h-[100px] md:h-[150px] lg:h-[200px]"> */}
                 <Link
+                  onClick={() => dispatch(getProduct(product))}
                   className="relative w-full h-[100px] md:h-[150px] lg:h-[200px]"
-                  href={`/products/${product._id}`}
+                  href={`/user/products/${product._id}`}
                 >
                   <Image
                     className="rounded-t-lg object-contain"
@@ -60,8 +61,8 @@ function ProductList() {
                       ? product?.description.slice(0, 50) + "..."
                       : product?.description}
                   </p>
-                  <a
-                    href="#"
+                  <Link
+                    href={`/user/products/${product._id}`}
                     className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                   >
                     Read more
@@ -80,7 +81,7 @@ function ProductList() {
                         d="M1 5h12m0 0L9 1m4 4L9 9"
                       />
                     </svg>
-                  </a>
+                  </Link>
                 </div>
               </div>
             );

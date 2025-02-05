@@ -35,7 +35,7 @@ function Login() {
           route.replace("/admin");
         } else if (res.payload?.data?.data?.role === "user") {
           console.log("true");
-          route.replace("/");
+          route.replace("/user");
         }
       } else if (res.type === "auth/actLogin/rejected") {
         setTimeout(() => {
