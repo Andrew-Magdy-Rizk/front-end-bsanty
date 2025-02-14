@@ -237,8 +237,8 @@ function FormAdd() {
                       className="text-gray-900 rounded-lg focus:outline-primary-600 focus-visible:outline-none  block w-full px-3 py-2 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:outline-primary-500"
                       id="productDescription"
                       value={data.description}
-                      required
-                      minLength={20}
+                      // required
+                      maxLength={2000}
                       name="description"
                       rows="3"
                       placeholder="Enter Description"
