@@ -4,6 +4,7 @@ import { Provider } from "react-redux";
 import store from "./store";
 import { useEffect } from "react";
 import Cookies from "js-cookie";
+import { loginReducer } from "./slices/authReducers";
 
 function ProviderWrap({ children }) {
   const handelUser = () => {
