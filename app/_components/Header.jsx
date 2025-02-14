@@ -29,22 +29,22 @@ export default function Header() {
     setOpenMenu(!openMenu);
   };
 
-  const handelUser = () => {
-    let auth = Cookies.get("auth");
-    if (auth) {
-      auth = JSON.parse(auth);
-      dipatch(
-        loginReducer({
-          data: auth.data,
-          token: auth.token,
-        })
-      );
-    }
-  };
+  // const handelUser = () => {
+  //   let auth = Cookies.get("auth");
+  //   if (auth) {
+  //     auth = JSON.parse(auth);
+  //     dipatch(
+  //       loginReducer({
+  //         data: auth.data,
+  //         token: auth.token,
+  //       })
+  //     );
+  //   }
+  // };
 
-  useEffect(() => {
-    handelUser();
-  }, []);
+  // useEffect(() => {
+  //   handelUser();
+  // }, []);
 
   return (
     <header className="shadow dark:shadow-gray-600 bg-white dark:bg-gray-900">
